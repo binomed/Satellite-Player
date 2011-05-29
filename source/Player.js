@@ -49,7 +49,7 @@ enyo.kind({
 		this.applyActionListChanges();
 	},
 	applyActionListChanges: function() {
-		this.actions = ["Playlists", "Artists", "Albums"];
+		this.actions = ["Playlists", "Artists", "Albums", "Genres"];
 		this.$.actionlist.render();
 	},
 	getActionListItem: function(inSender, inIndex) {
