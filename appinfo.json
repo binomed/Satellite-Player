@@ -1,0 +1,10 @@
+{
+	"id": "com.binomed.satelliteplayer",
+	"version": "0.1.0",
+	"vendor": "Binomed",
+	"type": "web",
+	"main": "index.html",
+	"title": "Satellite Player : an Audiogalaxy Client",
+	"icon": "icon.png",
+	"uiRevision":2
+}
