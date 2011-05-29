@@ -7,7 +7,7 @@ enyo.kind({
 	},
 	components: [
 		{name: "doLogin", kind: "WebService",
-		  url: "http://localhost/enyo/login.asp",
+		  url: SatelliteConstants.AG_LOGIN_URL,
 		  method: "POST",
 		  onSuccess: "gotLogged",
 		  onFailure: "gotLoggedFailure"},
@@ -33,10 +33,15 @@ enyo.kind({
 		var a = inSender.getActive();
 		inSender.setActive(!a);
 		console.log("API KEY : " + SatelliteConstants.AG_API_KEY);
-		this.$.doLogin.call({username: this.$.username.getValue(), password: this.$.password.getValue()});
+		this.$.doLogin.call({
+			client_id: SatelliteConstants.AG_API_KEY,
+			client_secret: SatelliteConstants.AG_API_SECRET,
+			grant_type: "password",
+			username: this.$.username.getValue(), 
+			password: this.$.password.getValue()});
 	},
 	gotLogged: function (inSender, inResponse, inRequest) { 
-		console.log(inResponse);
+		console.log("Login.js - gotLogged - Token : " + inResponse.access_token);
 		this.doLoginSucceeded(); 
 	},
 	gotLoggedFailure: function () { }
