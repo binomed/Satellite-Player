@@ -32,6 +32,7 @@ enyo.kind({
 	loginAction: function(inSender) {
 		var a = inSender.getActive();
 		inSender.setActive(!a);
+		console.log("API KEY : " + SatelliteConstants.AG_API_KEY);
 		this.$.doLogin.call({username: this.$.username.getValue(), password: this.$.password.getValue()});
 	},
 	gotLogged: function (inSender, inResponse, inRequest) { 

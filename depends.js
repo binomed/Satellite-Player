@@ -4,5 +4,6 @@ enyo.depends(
 	"source/Login.js",
 	"source/Player.js",
 	"source/ViewItem.js",
+	"source/utils/constants.js",
 	"source/SatellitePlayer.css"
 );
