@@ -37,11 +37,11 @@ enyo.kind({
 			client_id: SatelliteConstants.AG_API_KEY,
 			client_secret: SatelliteConstants.AG_API_SECRET,
 			grant_type: "password",
-			username: this.$.username.getValue(), 
-			password: this.$.password.getValue()});
+			user_email: this.$.username.getValue(), 
+			user_password: this.$.password.getValue()});
 	},
 	gotLogged: function (inSender, inResponse, inRequest) { 
-		console.log("Login.js - gotLogged - Token : " + inResponse.access_token);
+		console.log("Login.js - gotLogged - Token : " + JSON.stringify(inResponse));
 		this.doLoginSucceeded(); 
 	},
 	gotLoggedFailure: function () { }

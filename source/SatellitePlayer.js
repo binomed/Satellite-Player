@@ -8,6 +8,11 @@ enyo.kind({
 			{name: "player", kind:"SP.Player", onSelect: "playerSelected"}
 		]}
 	],
+	create: function() {
+		this.inherited(arguments);
+		this.applyActionListChanges();
+		this.dbHelper = new DBHelper(Mojo.Controller.appInfo.version);
+	},
 	loginSucceeded: function() {
 		this.$.pane.selectViewByName("player");
 	}
