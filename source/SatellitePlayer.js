@@ -10,10 +10,14 @@ enyo.kind({
 	],
 	create: function() {
 		this.inherited(arguments);
-		this.applyActionListChanges();
-		this.dbHelper = new DBHelper(Mojo.Controller.appInfo.version);
+		console.log("SatellitePlayer.js : create : app version " + enyo.fetchAppInfo().version);
+		this.dbHelper = new DBHelper(enyo.fetchAppInfo().version);
+		this.dbHelper.initDataBase(this.callBackInitDB.bind(this));
 	},
 	loginSucceeded: function() {
 		this.$.pane.selectViewByName("player");
+	},
+	callBackInitDB: function() {
+		console.log("SatellitePlayer.js : callBackInitDB : Init OK");
 	}
 });
