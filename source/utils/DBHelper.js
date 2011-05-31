@@ -63,15 +63,15 @@ DBHelper.prototype.createTables = function () {
 		+ ", " + this.KEY_SESSION_SCAN_STATE + " text " 
 		+ ", " + this.KEY_SESSION_HELPER_VERSION + " text " 
 		+ ", " + this.KEY_SESSION_ETAG + " text " 
-		+ "); GO;";
+		+ ");";
 		
 		this.DATABASE_CREATE_VERSION_TABLE = " CREATE TABLE IF NOT EXISTS " + this.DATABASE_VERSION_TABLE
 		+ " (" + this.KEY_VERSION_DB + " integer primary key"
 		+ ", " + this.KEY_VERSION_APP + " text " 
-		+ "); GO;";
+		+ ");";
 		
-		this.createTableDataBase(this.DATABASE_CREATE_VERSION_TABLE, this.DATABASE_VERSION_TABLE);
-		//this.extractVersionDataBase(this.callBackVersions.bind(this));
+		this.actionTableDataBase(this.DATABASE_CREATE_VERSION_TABLE, this.DATABASE_VERSION_TABLE);	// Création de la table version si besoin
+		this.extractVersionDataBase(this.callBackVersions.bind(this));	// Récupération de la version de la base/appli pour savoir quelles tables créer
 			
 	} catch (e)
 	{
@@ -80,24 +80,90 @@ DBHelper.prototype.createTables = function () {
 };
 
 /* Function for creation of table */
-DBHelper.prototype.createTableDataBase = function (scriptCreation, tableName) {
+DBHelper.prototype.actionTableDataBase = function (scriptAction, tableName) {
 	try {
 		this.nullHandleCount = 0;
 		this.db.transaction( 
-			enyo.bind(this,(function (transaction) { 
-				transaction.executeSql(scriptCreation, [], 
+			enyo.bind(this, (function (transaction) { 
+				transaction.executeSql(scriptAction, [], 
 					function(transaction, result){
-						console.log('DBHelper.createTableDataBase : table created ! '+tableName);
+						console.log('DBHelper.actionTableDataBase : Action OK on table ' + tableName);
 						return true;
 					}, 
-					function(transaction, result){
-						console.log('DBHelper.createTableDataBase : table created ! '+tableName);
+					function(transaction, error){
+						console.log('DBHelper.actionTableDataBase : Error was '+error.message+' (Code '+error.code+')'+' | script : '+scriptAction+' | '+ JSON.stringify(error)); 
 						return true;
 					});
 			}))
 		);
 	}
 	catch (e) {
-		console.log('DBHelper.createTableDataBase : Error during create table ' + tableName + ' : '+e.message);
+		console.log('DBHelper.actionTableDataBase : Error during action on table ' + tableName + ' : '+e.message);
 	}
+};
+
+DBHelper.prototype.extractVersionDataBase = function (onSuccess) {
+	// Version 1 : Nothing to do
+	var version = null;
+	onSuccess(version);
+};
+
+DBHelper.prototype.callBackVersions = function(version) {
+	try {
+		this.insertVersion(version);
+		this.actionTableDataBase(this.DATABASE_CREATE_SESSION_TABLE, this.DATABASE_SESSION_TABLE);	// Création de la table version si besoin
+	} catch(e) {
+		console.log('DBHelper.callBackVersions : Error during the structure creation : ' + e.message);
+	}
+};
+
+DBHelper.prototype.insertVersion = function (appVersion) {
+	this.nullHandleCount = 0;
+	var dbVersion = parseInt(this.DATABASE_VERSION);
+	var appVersionInsert = this.appVersion;
+	if (appVersion != null){
+		appVersionInsert = appVersion;
+	}
+	
+	var insertRequest = " INSERT INTO " + this.DATABASE_VERSION_TABLE
+		+ " (" + this.KEY_VERSION_DB 
+		+ ", " + this.KEY_VERSION_APP  
+		+ ") VALUES(?,?);"; 
+		
+	this.clearVersion();
+	this.db.transaction( 
+		enyo.bind(this, (function (transaction) { 
+				transaction.executeSql(insertRequest
+						, [dbVersion, appVersionInsert]
+						, function(transaction, result){
+							console.log('DBHelper.insertVersion : version created');
+							return true;
+						}
+						, function(transaction, error) { 
+							console.log('DBHelper.insertVersion : Error was ' + error.message+' (Code '+error.code+')'); 
+							return true;
+						}); 
+		}))
+	); 
+};
+
+DBHelper.prototype.clearVersion = function () {
+	this.nullHandleCount = 0;
+	var deleteRequest = 'DELETE FROM ' + this.DATABASE_VERSION_TABLE +';';	
+	
+	this.db.transaction( 
+		enyo.bind(this, (function (transaction) { 
+				transaction.executeSql(deleteRequest
+						, []
+						,function(transaction, results) {
+							console.log('DBHelper.clearVersion : version was removed.');
+							return true;
+						}
+						,function(transaction, error) {
+							console.log('DBHelper.clearVersion : Error was ' + error.message+' (Code '+error.code+')'); 
+							return true;
+						}
+					); 
+			}))
+	);
 };
