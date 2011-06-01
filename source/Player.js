@@ -24,13 +24,13 @@ enyo.kind({
 						{kind: "GrabButton"}
 					]}
 			]},
-			{name: "middle", width: "320px", kind:"SlidingView", peekWidth: 50, components: [
-					{kind: "Header", name: "header2", content:"Panel 2"},
+			{name: "middle", kind:"SlidingView", peekWidth: 50, components: [
+					{kind: "Header", name: "header2", content:"Sélectionnez une ressource"},
 					{kind: "Scroller", flex: 1, components: [
 						{kind: "FadeScroller", flex: 1, components: [
 							//Insert your components here
 							{kind: "VirtualList", name: "resourceList", onSetupRow: "setupRow", components: [
-								{kind: "Item", layoutKind: "HFlexLayout", components: [
+								{kind: "Item", layoutKind: "HFlexLayout", onclick: "selectResource", components: [
 									{name: "caption", flex: 1},
 									{name: "description", className: "enyo-item-secondary"}
 								]}
@@ -90,5 +90,9 @@ enyo.kind({
 			this.$.description.setContent(row.subtitle);
 			return true;
 		}
+	},
+	
+	selectResource: function (inSender, inEvent) {
+		console.log("Player.js - selectResource - " + inEvent.rowIndex);
 	}
 });
