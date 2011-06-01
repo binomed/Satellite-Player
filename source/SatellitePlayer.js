@@ -11,10 +11,9 @@ enyo.kind({
 	create: function() {
 		this.inherited(arguments);
 		console.log("SatellitePlayer.js : create : app version " + enyo.fetchAppInfo().version);
-		this.dbHelper = new DBHelper(enyo.fetchAppInfo().version);
-		this.dbHelper.initDataBase(this.callBackInitDB.bind(this));
+		DBhelper.initDataBase(this.callBackInitDB.bind(this));
 	},
-	loginSucceeded: function() {
+	loginSucceeded: function(response) {
 		this.$.pane.selectViewByName("player");
 	},
 	callBackInitDB: function() {

@@ -2,6 +2,7 @@
 enyo.depends(
 	"source/utils/constants.js",
 	"source/utils/DBHelper.js",
+	"source/class/Session.js",
 	"source/SatellitePlayer.js",
 	"source/Login.js",
 	"source/Player.js",
