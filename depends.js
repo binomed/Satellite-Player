@@ -3,9 +3,11 @@ enyo.depends(
 	"source/utils/constants.js",
 	"source/utils/DBHelper.js",
 	"source/class/Session.js",
+	"source/class/Resource.js",
 	"source/SatellitePlayer.js",
 	"source/Login.js",
 	"source/Player.js",
 	"source/ViewItem.js",
-	"source/SatellitePlayer.css"
+	"source/SatellitePlayer.css",
+	"source/TypePanel.js"
 );

@@ -8,6 +8,7 @@ enyo.kind({
 	DATABASE_NAME: "SatellitePlayer",
 	
 	DATABASE_SESSION_TABLE: "session",
+	DATABASE_PLAYLIST_TABLE: "playlist",
 	DATABASE_ARTIST_TABLE: "artist",
 	DATABASE_GENRE_TABLE: "genre",
 	DATABASE_ALBUM_TABLE: "album",
@@ -23,6 +24,19 @@ enyo.kind({
 	KEY_SESSION_SCAN_STATE: "scan_state",
 	KEY_SESSION_HELPER_VERSION: "helper_version",
 	KEY_SESSION_ETAG: "etag",
+	
+	KEY_PLAYLIST_ID: "id",
+	KEY_PLAYLIST_TITLE: "title",
+	
+	KEY_ARTIST_ID: "id",
+	KEY_ARTIST_NAME: "name",
+	
+	KEY_ALBUM_ID: "id",
+	KEY_ALBUM_TITLE: "title",
+	KEY_ALBUM_SUBTITLE: "subtitle",
+	
+	KEY_GENRE_ID: "id",
+	KEY_GENRE_NAME: "name",
 
 	KEY_VERSION_DB: "db_version",
 	KEY_VERSION_APP: "app_version",
@@ -30,6 +44,9 @@ enyo.kind({
 	/* CREATE SCRIPTS*/
 	DATABASE_CREATE_SESSION_TABLE: null,
 	DATABASE_CREATE_VERSION_TABLE: null,
+	DATABASE_CREATE_PLAYLIST_TABLE: null,
+	DATABASE_CREATE_ARTIST_TABLE: null,
+	DATABASE_CREATE_ALBUM_TABLE: null,
 	DATABASE_CREATE_PREFERENCES_TABLE: null,
 		
 	DATABASE_VERSION_WEBOS: 3,
@@ -72,6 +89,27 @@ enyo.kind({
 			this.DATABASE_CREATE_VERSION_TABLE = " CREATE TABLE IF NOT EXISTS " + this.DATABASE_VERSION_TABLE
 			+ " (" + this.KEY_VERSION_DB + " integer primary key"
 			+ ", " + this.KEY_VERSION_APP + " text " 
+			+ ");";
+			
+			this.DATABASE_CREATE_PLAYLIST_TABLE = " CREATE TABLE IF NOT EXISTS " + this.DATABASE_PLAYLIST_TABLE
+			+ " (" + this.KEY_PLAYLIST_ID + " text primary key"
+			+ ", " + this.KEY_PLAYLIST_TITLE + " text " 
+			+ ");";
+			
+			this.DATABASE_CREATE_ARTIST_TABLE = " CREATE TABLE IF NOT EXISTS " + this.DATABASE_ARTIST_TABLE
+			+ " (" + this.KEY_ARTIST_ID + " text primary key"
+			+ ", " + this.KEY_ARTIST_NAME + " text " 
+			+ ");";
+			
+			this.DATABASE_CREATE_ALBUM_TABLE = " CREATE TABLE IF NOT EXISTS " + this.DATABASE_ALBUM_TABLE
+			+ " (" + this.KEY_ALBUM_ID + " text primary key"
+			+ ", " + this.KEY_ALBUM_TITLE + " text " 
+			+ ", " + this.KEY_ALBUM_SUBTITLE + " text " 
+			+ ");";
+			
+			this.DATABASE_CREATE_GENRE_TABLE = " CREATE TABLE IF NOT EXISTS " + this.DATABASE_GENRE_TABLE
+			+ " (" + this.KEY_GENRE_ID + " text primary key"
+			+ ", " + this.KEY_GENRE_NAME + " text " 
 			+ ");";
 			
 			this.actionTableDataBase(this.DATABASE_CREATE_VERSION_TABLE, this.DATABASE_VERSION_TABLE);	// Création de la table version si besoin
@@ -119,6 +157,11 @@ enyo.kind({
 		try {
 			this.insertVersion(version);
 			this.actionTableDataBase(this.DATABASE_CREATE_SESSION_TABLE, this.DATABASE_SESSION_TABLE);	// Création de la table version si besoin
+			
+			this.actionTableDataBase(this.DATABASE_CREATE_PLAYLIST_TABLE, this.DATABASE_PLAYLIST_TABLE);	
+			this.actionTableDataBase(this.DATABASE_CREATE_ARTIST_TABLE, this.DATABASE_ARTIST_TABLE);	
+			this.actionTableDataBase(this.DATABASE_CREATE_ALBUM_TABLE, this.DATABASE_ALBUM_TABLE);	
+			this.actionTableDataBase(this.DATABASE_CREATE_GENRE_TABLE, this.DATABASE_GENRE_TABLE);	
 		} catch(e) {
 			console.log('DBHelper.callBackVersions : Error during the structure creation : ' + e.message);
 		}

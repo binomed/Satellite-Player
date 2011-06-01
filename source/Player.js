@@ -2,22 +2,22 @@
 enyo.kind({
 	name: "SP.Player",
 	kind: enyo.VFlexBox,
+	resources: null,
 	components: [
+		{name: "getResources", kind: "WebService",
+		  url: SatelliteConstants.AG_RESOURCE_URL,
+		  method: "POST",
+		  onSuccess: "gotResources",
+		  onFailure: "gotResourcesFailure"},
 		{name: "slidingPane", kind: "SlidingPane", flex: 1, components: [
 			{name: "left", width: "320px", kind:"SlidingView", components: [
-					{kind: "Header", content:"Panel 1"},
+					{kind: "Header", name: "header1", content:"Panel 1"},
 					// Scroller
 					{kind: "Scroller", flex: 1, components: [
 						// FadeScroller permet de montrer qu'il y a d'autres éléments
 						{kind: "FadeScroller", flex: 1, components: [
 							// Ici les éléments de la liste
-							{name: "actionlist", kind: "VirtualRepeater", onSetupRow: "getActionListItem",
-								components: [
-									{kind: "SwipeableItem", layoutKind: "VFlexLayout", components: [
-										{name: "description"}
-									]}
-								]
-							}
+							{kind: "TypePanel", className: "enyo-bg"}
 						]}
 					]},
 					{kind: "Toolbar", components: [
@@ -25,18 +25,15 @@ enyo.kind({
 					]}
 			]},
 			{name: "middle", width: "320px", kind:"SlidingView", peekWidth: 50, components: [
-					{kind: "Header", content:"Panel 2"},
+					{kind: "Header", name: "header2", content:"Panel 2"},
 					{kind: "Scroller", flex: 1, components: [
 						//Insert your components here
-					]},
-					{kind: "Toolbar", components: [
-						{kind: "GrabButton"}
-					]}
-			]},
-			{name: "right", kind:"SlidingView", flex: 1, components: [
-					{kind: "Header", content:"Panel 3"},
-					{kind: "Scroller", flex: 1, components: [
-						//Insert your components here
+						{kind: "VirtualList", name: "resourceList", onSetupRow: "setupRow", components: [
+							{kind: "Item", layoutKind: "HFlexLayout", components: [
+								{name: "caption", flex: 1},
+								{name: "description", className: "enyo-item-secondary"}
+							]}
+						]}
 					]},
 					{kind: "Toolbar", components: [
 						{kind: "GrabButton"}
@@ -44,18 +41,52 @@ enyo.kind({
 			]}
 		]}
 	],
+	
 	create: function() {
 		this.inherited(arguments);
-		this.applyActionListChanges();
 	},
-	applyActionListChanges: function() {
-		this.actions = ["Playlists", "Artists", "Albums", "Genres"];
-		this.$.actionlist.render();
+	
+	updateHeader: function() {
+		this.$.header1.setContent(Session.nickname);
 	},
-	getActionListItem: function(inSender, inIndex) {
-		var r = this.actions[inIndex];
-		if (r) {
-			this.$.description.setContent(r);
+		
+	getResources: function(type) {
+		console.log("Player.js - getResources - type : " + type);
+		
+		this.resources = new DP.Resource(type);
+		
+		this.$.getResources.call({
+			client_id: SatelliteConstants.AG_API_KEY,
+			access_token: Session.access_token,
+			img_size: "medium",
+			offset: 0, 
+			type: this.type});
+	},
+	
+	gotResources: function (inSender, inResponse, inRequest) { 
+		console.log("Player.js - gotResources - Token : " + JSON.stringify(inResponse));
+		
+		// Si une erreur est parvenue
+		if(inResponse.error) {
+			console.log("Player.js - gotResources - Error : " + inResponse.error);
+		} else {
+			this.resources.getResource(inResponse);
+			this.$.header2.setContent(this.resources.type);
+			this.$.resourceList.refresh();
+			//this.resources.save();
+		}
+	},
+	
+	gotResourcesFailure: function (inSender, inResponse) { 
+		console.log("Player.js - gotResourcesFailure - Token : " + inResponse);
+	},
+	
+	setupRow: function (inSender, inIndex) {
+		console.log("Player.js - setupRow - row " + inIndex);
+		var row = this.resources.resources[inIndex];
+		
+		if(row) {
+			this.$.caption.setContent(row.title);
 			return true;
 		}
 	}

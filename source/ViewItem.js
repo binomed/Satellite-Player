@@ -6,7 +6,7 @@ enyo.kind({
 	published: {
 		title: "",
 		description: "",
-		viewKind: ""
+		type: ""
 	},
 	components: [
 		{name: "title"},
@@ -25,13 +25,6 @@ enyo.kind({
 	},
 	// default click handling
 	clickHandler: function() {
-		// make assumption here about the owner and set the view
-		var c = this.owner.owner.setView(this.viewKind);
-		// set title and description to HeaderView
-		if (c && c instanceof HeaderView) {
-			c.setTitle(this.title);
-			c.setDescription(this.description);
-		}
-		this.inherited(arguments);
+		this.owner.owner.getResources(this.type);
 	}
 });

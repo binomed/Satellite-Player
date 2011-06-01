@@ -15,6 +15,7 @@ enyo.kind({
 	},
 	loginSucceeded: function(response) {
 		this.$.pane.selectViewByName("player");
+		this.$.player.updateHeader();
 	},
 	callBackInitDB: function() {
 		console.log("SatellitePlayer.js : callBackInitDB : Init OK");
