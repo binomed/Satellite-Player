@@ -6,7 +6,7 @@ enyo.kind({
 	components: [
 		{name: "getResources", kind: "WebService",
 		  url: SatelliteConstants.AG_RESOURCE_URL,
-		  method: "POST",
+		  method: "GET",
 		  onSuccess: "gotResources",
 		  onFailure: "gotResourcesFailure"},
 		{name: "slidingPane", kind: "SlidingPane", flex: 1, components: [
@@ -27,11 +27,13 @@ enyo.kind({
 			{name: "middle", width: "320px", kind:"SlidingView", peekWidth: 50, components: [
 					{kind: "Header", name: "header2", content:"Panel 2"},
 					{kind: "Scroller", flex: 1, components: [
-						//Insert your components here
-						{kind: "VirtualList", name: "resourceList", onSetupRow: "setupRow", components: [
-							{kind: "Item", layoutKind: "HFlexLayout", components: [
-								{name: "caption", flex: 1},
-								{name: "description", className: "enyo-item-secondary"}
+						{kind: "FadeScroller", flex: 1, components: [
+							//Insert your components here
+							{kind: "VirtualList", name: "resourceList", onSetupRow: "setupRow", components: [
+								{kind: "Item", layoutKind: "HFlexLayout", components: [
+									{name: "caption", flex: 1},
+									{name: "description", className: "enyo-item-secondary"}
+								]}
 							]}
 						]}
 					]},
@@ -52,7 +54,6 @@ enyo.kind({
 		
 	getResources: function(type) {
 		console.log("Player.js - getResources - type : " + type);
-		
 		this.resources = new DP.Resource(type);
 		
 		this.$.getResources.call({
@@ -60,7 +61,7 @@ enyo.kind({
 			access_token: Session.access_token,
 			img_size: "medium",
 			offset: 0, 
-			type: this.type});
+			"type": type});
 	},
 	
 	gotResources: function (inSender, inResponse, inRequest) { 
@@ -82,11 +83,11 @@ enyo.kind({
 	},
 	
 	setupRow: function (inSender, inIndex) {
-		console.log("Player.js - setupRow - row " + inIndex);
 		var row = this.resources.resources[inIndex];
 		
 		if(row) {
 			this.$.caption.setContent(row.title);
+			this.$.description.setContent(row.subtitle);
 			return true;
 		}
 	}
